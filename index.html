@@ -3,25 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ollama-like Interface</title>
+    <title>ChatGPT 2025</title>
     <style>
-        /* Ollama-inspired dark theme */
+        /* ChatGPT 2025 Modern Design */
         :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #21262d;
-            --text-primary: #f0f6fc;
-            --text-secondary: #8b949e;
-            --accent-blue: #58a6ff;
-            --accent-green: #3fb950;
-            --border-color: #30363d;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7f7f8;
+            --bg-tertiary: #ececf1;
+            --bg-sidebar: #f9f9f9;
+            --bg-canvas: #fafafa;
+            --text-primary: #000000;
+            --text-secondary: #6e6e80;
+            --text-tertiary: #acacbe;
+            --accent-green: #10a37f;
+            --accent-blue: #1a7f64;
+            --border-light: #e5e5e5;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode {
+            --bg-primary: #343541;
+            --bg-secondary: #444654;
+            --bg-tertiary: #2a2b32;
+            --bg-sidebar: #202123;
+            --bg-canvas: #25252d;
+            --text-primary: #ececf1;
+            --text-secondary: #acacbe;
+            --text-tertiary: #6e6e80;
+            --border-light: #4a4a57;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
         }
         
         body {
@@ -29,85 +45,63 @@
             color: var(--text-primary);
             height: 100vh;
             display: flex;
-            flex-direction: column;
+            transition: all 0.3s ease;
         }
         
-        /* Header */
-        .header {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--accent-blue);
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-        
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        
-        .nav-links a:hover {
-            color: var(--text-primary);
-        }
-        
-        /* Main Chat Container */
-        .chat-container {
-            flex: 1;
-            display: flex;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 2rem;
-            gap: 2rem;
-        }
-        
-        /* Sidebar */
+        /* Enhanced Sidebar */
         .sidebar {
-            width: 250px;
-            background-color: var(--bg-secondary);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 1rem;
+            width: 280px;
+            background-color: var(--bg-sidebar);
             display: flex;
             flex-direction: column;
+            border-right: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-light);
         }
         
         .new-chat-btn {
-            background-color: var(--accent-green);
-            color: var(--bg-primary);
+            width: 100%;
+            background: var(--accent-green);
             border: none;
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
+            border-radius: 8px;
+            padding: 0.875rem;
+            color: white;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
             margin-bottom: 1rem;
+            transition: background-color 0.2s;
+        }
+        
+        .new-chat-btn:hover {
+            background-color: #0d926e;
         }
         
         .chat-history {
             flex: 1;
             overflow-y: auto;
+            padding: 0.75rem;
         }
         
         .chat-history-item {
-            padding: 0.75rem;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
+            padding: 0.875rem;
+            border-radius: 8px;
+            margin-bottom: 0.375rem;
             cursor: pointer;
             font-size: 0.9rem;
             color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+            border: 1px solid transparent;
         }
         
         .chat-history-item:hover {
@@ -118,6 +112,126 @@
         .chat-history-item.active {
             background-color: var(--bg-tertiary);
             color: var(--text-primary);
+            border-color: var(--accent-green);
+        }
+        
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-light);
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* Enhanced Header */
+        .header {
+            padding: 1.25rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-primary);
+        }
+        
+        .model-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .model-badge {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            color: white;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        /* Canvas Mode - New 2025 Feature */
+        .canvas-container {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-canvas);
+            z-index: 100;
+            padding: 2rem;
+            overflow: auto;
+        }
+        
+        .canvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .canvas-content {
+            background-color: var(--bg-primary);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 12px var(--shadow-light);
+            min-height: 400px;
+        }
+        
+        .canvas-tools {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .canvas-tool {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .canvas-tool:hover {
+            background-color: var(--bg-tertiary);
         }
         
         /* Chat Area */
@@ -125,282 +239,666 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            background-color: var(--bg-secondary);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
             overflow: hidden;
+        }
+        
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            text-align: center;
+        }
+        
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .capabilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+            max-width: 1000px;
+        }
+        
+        .capability-card {
+            background-color: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: left;
+            border: 1px solid var(--border-light);
+            transition: transform 0.2s;
+        }
+        
+        .capability-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .capability-card h4 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
         }
         
         .chat-messages {
             flex: 1;
-            padding: 1.5rem;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+            padding: 2rem;
+            display: none;
         }
         
         .message {
             display: flex;
-            gap: 1rem;
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
             max-width: 100%;
         }
         
-        .message.user {
-            justify-content: flex-end;
-        }
-        
-        .message-content {
-            background-color: var(--bg-tertiary);
-            padding: 1rem;
-            border-radius: 8px;
-            max-width: 70%;
-            border: 1px solid var(--border-color);
-        }
-        
-        .message.user .message-content {
-            background-color: var(--accent-blue);
-            color: white;
-        }
-        
         .message-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background-color: var(--bg-tertiary);
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-weight: 700;
             flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            color: white;
+            font-size: 0.9rem;
         }
         
         .message.user .message-avatar {
-            background-color: var(--accent-green);
+            background: #8e8ea0;
         }
         
-        /* Input Area */
-        .input-area {
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-            background-color: var(--bg-tertiary);
+        .message-content {
+            flex: 1;
+            padding-top: 0.5rem;
         }
         
-        .input-container {
+        .message-content p {
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+        
+        .message-actions {
             display: flex;
-            gap: 0.5rem;
-            align-items: flex-end;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        
+        .message-action {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 0.8rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .message-action:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        /* Enhanced Input Area */
+        .input-container {
+            padding: 1.5rem 2rem;
+            background-color: var(--bg-primary);
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .input-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
         }
         
         .message-input {
-            flex: 1;
+            width: 100%;
             background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 1.25rem 4rem 1.25rem 1.5rem;
             color: var(--text-primary);
             font-size: 1rem;
             resize: none;
-            min-height: 60px;
-            max-height: 120px;
+            min-height: 64px;
+            max-height: 200px;
+            outline: none;
+            transition: all 0.2s;
+            line-height: 1.5;
         }
         
         .message-input:focus {
-            outline: none;
-            border-color: var(--accent-blue);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.1);
         }
         
-        .send-btn {
-            background-color: var(--accent-blue);
+        .input-actions {
+            position: absolute;
+            right: 1rem;
+            bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .send-button {
+            background: var(--accent-green);
             border: none;
-            border-radius: 6px;
-            padding: 0.75rem 1.5rem;
-            color: white;
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-weight: 500;
+            color: white;
+            transition: background-color 0.2s;
         }
         
-        .send-btn:hover {
-            background-color: #4a94e6;
+        .send-button:hover:not(:disabled) {
+            background-color: #0d926e;
         }
         
-        /* Model Selector */
-        .model-selector {
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: var(--bg-tertiary);
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
+        .send-button:disabled {
+            background-color: var(--text-tertiary);
+            cursor: not-allowed;
         }
         
-        .model-selector select {
-            width: 100%;
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+        .file-upload {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
             padding: 0.5rem;
-            color: var(--text-primary);
+            border-radius: 6px;
+            font-size: 1.2rem;
         }
         
-        /* Footer */
-        .footer {
-            background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            padding: 1rem 2rem;
+        .input-footer {
             text-align: center;
-            color: var(--text-secondary);
             font-size: 0.8rem;
+            color: var(--text-tertiary);
+            margin-top: 0.75rem;
+        }
+        
+        /* Enhanced Example Prompts */
+        .example-prompts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+            margin-top: 2rem;
+            max-width: 800px;
+        }
+        
+        .example-prompt {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        
+        .example-prompt:hover {
+            background-color: var(--bg-tertiary);
+            transform: translateY(-1px);
+        }
+        
+        /* Mobile Responsive */
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .capabilities-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                left: -280px;
+                height: 100%;
+                z-index: 1000;
+                width: 280px;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+            
+            .example-prompts {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .input-container {
+                padding: 1rem;
+            }
         }
         
         /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         
         ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
+            background: transparent;
         }
         
         ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 3px;
+            background: var(--text-tertiary);
+            border-radius: 4px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
             background: var(--text-secondary);
         }
+
+        /* Animation for typing indicator */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="logo">Ollama UI</div>
-        <nav class="nav-links">
-            <a href="#">Models</a>
-            <a href="#">Library</a>
-            <a href="#">Docs</a>
-            <a href="#">Settings</a>
-        </nav>
-    </header>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <button class="new-chat-btn">
+                <span>+</span> New chat
+            </button>
+        </div>
+        
+        <div class="chat-history">
+            <div class="chat-history-item active">
+                <span>🎨</span> UI Design with Canvas
+            </div>
+            <div class="chat-history-item">
+                <span>💻</span> Code Generation Help
+            </div>
+            <div class="chat-history-item">
+                <span>📊</span> Data Analysis Project
+            </div>
+            <div class="chat-history-item">
+                <span>🖼️</span> Image Generation Test
+            </div>
+            <div class="chat-history-item">
+                <span>🔍</span> Research Assistance
+            </div>
+            <div class="chat-history-item">
+                <span>📝</span> Content Writing
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div><strong>ChatGPT 2025</strong></div>
+            <div>GPT-5 • Canvas Mode Enabled</div>
+            <div>Free Research Preview</div>
+        </div>
+    </aside>
     
-    <!-- Main Chat Container -->
-    <div class="chat-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <button class="new-chat-btn">+ New Chat</button>
-            <div class="chat-history">
-                <div class="chat-history-item active">Welcome Chat</div>
-                <div class="chat-history-item">Python Help</div>
-                <div class="chat-history-item">Web Design Discussion</div>
-                <div class="chat-history-item">Project Ideas</div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Canvas Mode (New 2025 Feature) -->
+        <div class="canvas-container" id="canvasContainer">
+            <div class="canvas-header">
+                <h2>Canvas Mode</h2>
+                <button class="action-btn" id="closeCanvas">
+                    <span>←</span> Back to Chat
+                </button>
             </div>
+            <div class="canvas-content" id="canvasContent">
+                <h3>Interactive Canvas Workspace</h3>
+                <p>This is the new Canvas Mode feature introduced in ChatGPT 2025. You can:</p>
+                <ul>
+                    <li>Edit content inline with AI assistance</li>
+                    <li>Generate and preview code in real-time</li>
+                    <li>Create interactive web applications</li>
+                    <li>Build data dashboards and visualizations</li>
+                </ul>
+                <div class="canvas-tools">
+                    <div class="canvas-tool">Edit Text</div>
+                    <div class="canvas-tool">Generate Code</div>
+                    <div class="canvas-tool">Preview</div>
+                    <div class="canvas-tool">Export</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Header -->
+        <header class="header">
+            <button class="sidebar-toggle">☰</button>
             <div class="model-selector">
-                <label for="model-select">Current Model:</label>
-                <select id="model-select">
-                    <option>llama3.1:latest</option>
-                    <option>mistral:latest</option>
-                    <option>phi3:latest</option>
-                    <option>codellama:latest</option>
-                </select>
+                <span class="model-badge">GPT-5</span>
+                <span>Thinking Mode • Canvas Ready</span>
             </div>
-        </aside>
+            <div class="header-actions">
+                <button class="action-btn" id="canvasBtn">
+                    <span>🎨</span> Canvas
+                </button>
+                <button class="action-btn" id="themeToggle">
+                    <span>🌙</span> Theme
+                </button>
+                <button class="action-btn">
+                    <span>⚙️</span> Settings
+                </button>
+            </div>
+        </header>
         
         <!-- Chat Area -->
-        <main class="chat-area">
-            <div class="chat-messages">
-                <!-- AI Message -->
-                <div class="message">
-                    <div class="message-avatar">AI</div>
-                    <div class="message-content">
-                        <p>Hello! I'm your AI assistant. How can I help you today?</p>
+        <div class="chat-area">
+            <!-- Welcome Screen -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <h1 class="welcome-title">ChatGPT</h1>
+                <p style="font-size: 1.2rem; margin-bottom: 2rem; color: var(--text-secondary);">
+                    Hello! I'm ChatGPT 2025 with enhanced Canvas Mode. How can I help you today?
+                </p>
+                
+                <div class="capabilities-grid">
+                    <div class="capability-card">
+                        <h4>🎨 Canvas Mode</h4>
+                        <p>"Design a mobile app interface with interactive prototyping using Canvas mode"</p>
+                    </div>
+                    <div class="capability-card">
+                        <h4>💻 Code Generation</h4>
+                        <p>"Build a responsive website with real-time code preview and editing"</p>
+                    </div>
+                    <div class="capability-card">
+                        <h4>🖼️ Image Creation</h4>
+                        <p>"Generate professional images for marketing materials and social media"</p>
+                    </div>
+                    <div class="capability-card">
+                        <h4>📊 Data Analysis</h4>
+                        <p>"Create interactive dashboards from uploaded CSV files with visualizations"</p>
                     </div>
                 </div>
                 
-                <!-- User Message -->
-                <div class="message user">
-                    <div class="message-content">
-                        <p>Can you help me build a website that looks like Ollama?</p>
+                <div class="example-prompts">
+                    <div class="example-prompt" data-prompt="Activate Canvas mode and help me design a website layout">
+                        "Activate Canvas mode and help me design a website layout"
                     </div>
-                    <div class="message-avatar">U</div>
-                </div>
-                
-                <!-- AI Response -->
-                <div class="message">
-                    <div class="message-avatar">AI</div>
-                    <div class="message-content">
-                        <p>Absolutely! I've created an HTML file that replicates the Ollama UI with a dark theme, chat interface, and sidebar. You can customize it further by:</p>
-                        <ul>
-                            <li>Changing the colors in the CSS variables</li>
-                            <li>Adding more chat functionality with JavaScript</li>
-                            <li>Modifying the layout to fit your needs</li>
-                        </ul>
+                    <div class="example-prompt" data-prompt="Generate an image of a modern workspace for my presentation">
+                        "Generate an image of a modern workspace for my presentation"
+                    </div>
+                    <div class="example-prompt" data-prompt="Create an interactive learning game about AI concepts">
+                        "Create an interactive learning game about AI concepts"
+                    </div>
+                    <div class="example-prompt" data-prompt="Build a calculator for project budgeting with Canvas">
+                        "Build a calculator for project budgeting with Canvas"
                     </div>
                 </div>
             </div>
             
-            <!-- Input Area -->
-            <div class="input-area">
-                <div class="input-container">
-                    <textarea class="message-input" placeholder="Send a message..." rows="1"></textarea>
-                    <button class="send-btn">Send</button>
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Input Area -->
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea class="message-input" placeholder="Message ChatGPT... Try 'Activate Canvas mode' or 'Generate an image'" rows="1"></textarea>
+                <div class="input-actions">
+                    <button class="file-upload" title="Upload files">
+                        📎
+                    </button>
+                    <button class="send-button" disabled>
+                        ↑
+                    </button>
                 </div>
             </div>
-        </main>
-    </div>
-    
-    <!-- Footer -->
-    <footer class="footer">
-        <p>Ollama-like Interface • Built with HTML/CSS • Customize as needed</p>
-    </footer>
+            <div class="input-footer">
+                ChatGPT 2025 • GPT-5 with Canvas Mode • May make mistakes. Consider checking important information.
+            </div>
+        </div>
+    </main>
 
     <script>
-        // Basic functionality for the chat interface
         document.addEventListener('DOMContentLoaded', function() {
             const messageInput = document.querySelector('.message-input');
-            const sendButton = document.querySelector('.send-btn');
-            const chatMessages = document.querySelector('.chat-messages');
+            const sendButton = document.querySelector('.send-button');
+            const chatMessages = document.getElementById('chatMessages');
+            const welcomeScreen = document.getElementById('welcomeScreen');
             const newChatBtn = document.querySelector('.new-chat-btn');
+            const themeToggle = document.querySelector('#themeToggle');
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const examplePrompts = document.querySelectorAll('.example-prompt');
+            const canvasBtn = document.querySelector('#canvasBtn');
+            const canvasContainer = document.querySelector('#canvasContainer');
+            const closeCanvas = document.querySelector('#closeCanvas');
+            const canvasContent = document.querySelector('#canvasContent');
+            
+            let isDarkMode = false;
+            let isCanvasActive = false;
             
             // Auto-resize textarea
             messageInput.addEventListener('input', function() {
                 this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
+                this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+                sendButton.disabled = this.value.trim() === '';
             });
             
             // Send message function
             function sendMessage() {
                 const message = messageInput.value.trim();
                 if (message) {
+                    // Handle special commands
+                    if (message.toLowerCase().includes('canvas') || message.toLowerCase().includes('activate canvas')) {
+                        activateCanvasMode();
+                        return;
+                    }
+                    
+                    if (message.toLowerCase().includes('image') || message.toLowerCase().includes('generate image')) {
+                        handleImageGeneration(message);
+                        return;
+                    }
+                    
+                    // Hide welcome screen, show chat messages
+                    welcomeScreen.style.display = 'none';
+                    chatMessages.style.display = 'block';
+                    
                     // Add user message
                     const userMessage = document.createElement('div');
                     userMessage.className = 'message user';
                     userMessage.innerHTML = `
+                        <div class="message-avatar">U</div>
                         <div class="message-content">
                             <p>${message}</p>
+                            <div class="message-actions">
+                                <button class="message-action">Copy</button>
+                                <button class="message-action">Edit</button>
+                                <button class="message-action">Regenerate</button>
+                            </div>
                         </div>
-                        <div class="message-avatar">U</div>
                     `;
                     chatMessages.appendChild(userMessage);
                     
                     // Clear input
                     messageInput.value = '';
                     messageInput.style.height = 'auto';
+                    sendButton.disabled = true;
                     
-                    // Simulate AI response
+                    // Show enhanced typing indicator
+                    const typingIndicator = document.createElement('div');
+                    typingIndicator.className = 'message';
+                    typingIndicator.innerHTML = `
+                        <div class="message-avatar">AI</div>
+                        <div class="message-content">
+                            <p><em>ChatGPT 2025 is thinking...</em></p>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); animation: pulse 1.5s infinite;"></div>
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); animation: pulse 1.5s infinite 0.2s;"></div>
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); animation: pulse 1.5s infinite 0.4s;"></div>
+                            </div>
+                        </div>
+                    `;
+                    chatMessages.appendChild(typingIndicator);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // Simulate AI response after delay
                     setTimeout(() => {
+                        chatMessages.removeChild(typingIndicator);
+                        
                         const aiMessage = document.createElement('div');
                         aiMessage.className = 'message';
                         aiMessage.innerHTML = `
                             <div class="message-avatar">AI</div>
                             <div class="message-content">
-                                <p>I received your message: "${message}". This is a simulated response.</p>
+                                <p>${getAIResponse(message)}</p>
+                                <div class="message-actions">
+                                    <button class="message-action">Copy</button>
+                                    <button class="message-action">Regenerate</button>
+                                    <button class="message-action">Like</button>
+                                    <button class="message-action">Dislike</button>
+                                    ${message.toLowerCase().includes('code') ? '<button class="message-action">Run in Canvas</button>' : ''}
+                                </div>
                             </div>
                         `;
                         chatMessages.appendChild(aiMessage);
                         chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }, 1000);
+                    }, 1500 + Math.random() * 1000);
+                }
+            }
+            
+            // Canvas Mode Functionality
+            function activateCanvasMode() {
+                isCanvasActive = true;
+                canvasContainer.style.display = 'block';
+                welcomeScreen.style.display = 'none';
+                chatMessages.style.display = 'none';
+                
+                // Update canvas content based on context
+                canvasContent.innerHTML = `
+                    <h3>🎨 Canvas Mode Active</h3>
+                    <p>Welcome to ChatGPT 2025's enhanced Canvas Mode! This workspace allows for interactive editing and real-time previews.</p>
                     
+                    <div style="margin: 2rem 0; padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px;">
+                        <h4>What would you like to create?</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                            <button class="canvas-tool" onclick="createWebApp()">Web Application</button>
+                            <button class="canvas-tool" onclick="createDashboard()">Data Dashboard</button>
+                            <button class="canvas-tool" onclick="createDocument()">Interactive Document</button>
+                            <button class="canvas-tool" onclick="createGame()">Learning Game</button>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-tools">
+                        <div class="canvas-tool">Text Editor</div>
+                        <div class="canvas-tool">Code Preview</div>
+                        <div class="canvas-tool">Image Generator</div>
+                        <div class="canvas-tool">Export Options</div>
+                    </div>
+                `;
+            }
+            
+            function handleImageGeneration(message) {
+                welcomeScreen.style.display = 'none';
+                chatMessages.style.display = 'block';
+                
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user';
+                userMessage.innerHTML = `
+                    <div class="message-avatar">U</div>
+                    <div class="message-content">
+                        <p>${message}</p>
+                    </div>
+                `;
+                chatMessages.appendChild(userMessage);
+                
+                // Clear input
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+                sendButton.disabled = true;
+                
+                // Show image generation indicator
+                const imageIndicator = document.createElement('div');
+                imageIndicator.className = 'message';
+                imageIndicator.innerHTML = `
+                    <div class="message-avatar">AI</div>
+                    <div class="message-content">
+                        <p><em>Generating image with GPT-5's enhanced image capabilities...</em></p>
+                    </div>
+                `;
+                chatMessages.appendChild(imageIndicator);
+                
+                setTimeout(() => {
+                    chatMessages.removeChild(imageIndicator);
+                    
+                    const aiMessage = document.createElement('div');
+                    aiMessage.className = 'message';
+                    aiMessage.innerHTML = `
+                        <div class="message-avatar">AI</div>
+                        <div class="message-content">
+                            <p>Here's the image you requested, generated using ChatGPT 2025's advanced image generation:</p>
+                            <div style="background: var(--bg-secondary); padding: 2rem; border-radius: 12px; text-align: center; margin: 1rem 0;">
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">🖼️</div>
+                                <p><strong>AI Generated Image</strong></p>
+                                <p style="color: var(--text-tertiary); font-size: 0.9rem;">Image preview - GPT-5 Enhanced Generation</p>
+                            </div>
+                            <p>You can download this image or request modifications.</p>
+                        </div>
+                    `;
+                    chatMessages.appendChild(aiMessage);
                     chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 2000);
+            }
+            
+            // Generate AI responses based on message content
+            function getAIResponse(userMessage) {
+                const lowerMessage = userMessage.toLowerCase();
+                
+                if (lowerMessage.includes('canvas') || lowerMessage.includes('design')) {
+                    return "I've activated Canvas Mode! This is one of ChatGPT 2025's key features. You can now:\n\n• Edit content inline with AI assistance\n• Generate and preview code in real-time\n• Create interactive web applications\n• Build data visualizations\n\nWhat would you like to create in Canvas mode?";
+                } else if (lowerMessage.includes('image') || lowerMessage.includes('generate')) {
+                    return "ChatGPT 2025 includes enhanced image generation capabilities powered by GPT-5. I can create high-quality images for various purposes including marketing materials, UI mockups, concept art, and more. Just describe what you'd like to see!";
+                } else if (lowerMessage.includes('code') || lowerMessage.includes('program')) {
+                    return "With ChatGPT 2025's improved coding capabilities, I can help you with:\n\n• Full-stack web development\n• Interactive application building\n• Real-time code preview and editing\n• Debugging and optimization\n\nYou can also run the code directly in Canvas mode for instant previews!";
+                } else if (lowerMessage.includes('data') || lowerMessage.includes('analy')) {
+                    return "ChatGPT 2025 excels at data analysis and visualization. I can help you:\n\n• Process and analyze uploaded datasets\n• Create interactive dashboards\n• Generate insights and reports\n• Build custom data visualization tools\n\nTry uploading a file or describing your data analysis needs!";
+                } else {
+                    return "Thank you for your message! I'm ChatGPT 2025 with enhanced capabilities including:\n\n🎨 **Canvas Mode** - Interactive workspace for editing and previews\n🖼️ **Advanced Image Generation** - High-quality visual creation\n💻 **Improved Coding** - Better code generation and execution\n📊 **Data Analysis** - Enhanced processing and visualization\n\nHow can I assist you today? Feel free to explore these new features!";
                 }
             }
             
@@ -416,25 +914,93 @@
             
             // New chat button
             newChatBtn.addEventListener('click', function() {
-                chatMessages.innerHTML = `
-                    <div class="message">
-                        <div class="message-avatar">AI</div>
-                        <div class="message-content">
-                            <p>Hello! I'm your AI assistant. Start a new conversation!</p>
-                        </div>
-                    </div>
-                `;
+                chatMessages.innerHTML = '';
+                chatMessages.style.display = 'none';
+                welcomeScreen.style.display = 'flex';
+                canvasContainer.style.display = 'none';
+                isCanvasActive = false;
             });
             
-            // Chat history items
-            document.querySelectorAll('.chat-history-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    document.querySelectorAll('.chat-history-item').forEach(i => {
-                        i.classList.remove('active');
-                    });
-                    this.classList.add('active');
+            // Theme toggle
+            themeToggle.addEventListener('click', function() {
+                isDarkMode = !isDarkMode;
+                if (isDarkMode) {
+                    document.body.classList.add('dark-mode');
+                    themeToggle.innerHTML = '<span>☀️</span> Light';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    themeToggle.innerHTML = '<span>🌙</span> Dark';
+                }
+            });
+            
+            // Sidebar toggle for mobile
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('open');
+            });
+            
+            // Canvas mode button
+            canvasBtn.addEventListener('click', activateCanvasMode);
+            
+            // Close canvas button
+            closeCanvas.addEventListener('click', function() {
+                canvasContainer.style.display = 'none';
+                welcomeScreen.style.display = 'flex';
+                isCanvasActive = false;
+            });
+            
+            // Example prompts
+            examplePrompts.forEach(prompt => {
+                prompt.addEventListener('click', function() {
+                    messageInput.value = this.getAttribute('data-prompt');
+                    messageInput.style.height = 'auto';
+                    messageInput.style.height = Math.min(messageInput.scrollHeight, 200) + 'px';
+                    sendButton.disabled = false;
+                    messageInput.focus();
                 });
             });
+            
+            // Message action handlers
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('message-action')) {
+                    const action = e.target.textContent;
+                    const messageContent = e.target.closest('.message-content').querySelector('p').textContent;
+                    
+                    if (action === 'Copy') {
+                        navigator.clipboard.writeText(messageContent).then(() => {
+                            const originalText = e.target.textContent;
+                            e.target.textContent = 'Copied!';
+                            setTimeout(() => {
+                                e.target.textContent = originalText;
+                            }, 2000);
+                        });
+                    } else if (action === 'Run in Canvas') {
+                        activateCanvasMode();
+                    }
+                }
+            });
+            
+            // Global functions for canvas tools
+            window.createWebApp = function() {
+                canvasContent.innerHTML = `
+                    <h3>Web Application Builder</h3>
+                    <p>Let's build a web application together! Describe what you'd like to create:</p>
+                    <textarea style="width: 100%; min-height: 100px; margin: 1rem 0; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg-secondary); color: var(--text-primary);" placeholder="Describe your web app..."></textarea>
+                    <button class="canvas-tool" style="margin-top: 1rem;">Generate Application</button>
+                `;
+            };
+            
+            window.createDashboard = function() {
+                canvasContent.innerHTML = `
+                    <h3>Data Dashboard Creator</h3>
+                    <p>Upload your data or describe what you'd like to visualize:</p>
+                    <div style="border: 2px dashed var(--border-light); border-radius: 8px; padding: 2rem; text-align: center; margin: 1rem 0;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                        <p>Drag and drop your CSV, Excel, or JSON file here</p>
+                        <p style="color: var(--text-tertiary); font-size: 0.9rem;">Or describe your data visualization needs</p>
+                    </div>
+                    <button class="canvas-tool">Create Dashboard</button>
+                `;
+            };
         });
     </script>
 </body>
