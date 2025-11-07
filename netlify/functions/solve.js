@@ -19,6 +19,7 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         success: true,
         message: 'AnswerAI5000 API is working!',
+        version: '1.0',
         timestamp: new Date().toISOString()
       })
     };
@@ -30,8 +31,8 @@ exports.handler = async (event, context) => {
       const body = JSON.parse(event.body || '{}');
       const { question, platform } = body;
 
-      // Simple AI response simulation
-      const answer = simulateAIResponse(question, platform);
+      // Simple response - you can enhance this later
+      const answer = generateSimpleAnswer(question);
       
       return {
         statusCode: 200,
@@ -39,24 +40,25 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({
           success: true,
           answer: answer,
-          message: 'Processed by AnswerAI5000',
+          message: `Processed question about ${platform}`,
           timestamp: new Date().toISOString()
         })
       };
       
     } catch (error) {
       return {
-        statusCode: 200, // Still return 200 but with error flag
+        statusCode: 200,
         headers,
         body: JSON.stringify({
           success: false,
-          error: error.message,
-          answer: '42' // Fallback answer
+          error: 'Simple error: ' + error.message,
+          answer: '42' // Fallback
         })
       };
     }
   }
 
+  // Method not allowed
   return {
     statusCode: 405,
     headers,
@@ -64,10 +66,12 @@ exports.handler = async (event, context) => {
   };
 };
 
-function simulateAIResponse(question, platform) {
-  // Simple simulation - in production, this would call real AI
+function generateSimpleAnswer(question) {
+  // Very simple answer generator for testing
   if (question && question.includes('scale factor')) return '2';
+  if (question && question.includes('dilation')) return '2';
   if (question && question.includes('area')) return '25';
   if (question && question.includes('perimeter')) return '20';
+  if (question && question.includes('triangle')) return '180';
   return '42'; // Default answer
 }
