@@ -1,13 +1,6 @@
 {
   "name": "answerai5000",
   "version": "1.0.0",
-  "description": "AI-powered educational assistant",
-  "main": "index.js",
-  "scripts": {
-    "build": "echo 'No build needed'"
-  },
-  "keywords": ["education", "ai"],
-  "author": "AnswerAI5000",
-  "license": "MIT"
+  "description": "AI educational assistant",
+  "main": "index.js"
 }
-
