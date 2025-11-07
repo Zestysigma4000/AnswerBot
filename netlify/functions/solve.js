@@ -1,26 +1,37 @@
-const fetch = require('node-fetch');
-
 exports.handler = async (event, context) => {
+  // Set CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': 'https://answerai500.netlify.app',
+    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+    'Access-Control-Allow-Methods': 'POST, OPTIONS, GET'
   };
 
+  // Handle preflight OPTIONS request
   if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
+
+  // Handle GET requests (for testing)
+  if (event.httpMethod === 'GET') {
     return {
       statusCode: 200,
       headers,
-      body: ''
+      body: JSON.stringify({
+        success: true,
+        message: 'AnswerAI5000 API is working!',
+        timestamp: new Date().toISOString()
+      })
     };
   }
 
+  // Handle POST requests
   if (event.httpMethod === 'POST') {
     try {
-      const body = JSON.parse(event.body);
+      const body = JSON.parse(event.body || '{}');
       const { question, platform } = body;
 
-      const answer = await generateAnswer(question, platform);
+      // Simple AI response simulation
+      const answer = simulateAIResponse(question, platform);
       
       return {
         statusCode: 200,
@@ -28,18 +39,19 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({
           success: true,
           answer: answer,
-          message: 'Processed by AnswerAI5000 Netlify',
+          message: 'Processed by AnswerAI5000',
           timestamp: new Date().toISOString()
         })
       };
       
     } catch (error) {
       return {
-        statusCode: 500,
+        statusCode: 200, // Still return 200 but with error flag
         headers,
         body: JSON.stringify({
           success: false,
-          error: error.message
+          error: error.message,
+          answer: '42' // Fallback answer
         })
       };
     }
@@ -52,14 +64,10 @@ exports.handler = async (event, context) => {
   };
 };
 
-async function generateAnswer(question, platform) {
-  const answers = {
-    'math': '42',
-    'geometry': '2',
-    'algebra': 'x = 5',
-    'default': 'The solution requires careful analysis.'
-  };
-  
-  return answers[platform] || answers.default;
+function simulateAIResponse(question, platform) {
+  // Simple simulation - in production, this would call real AI
+  if (question && question.includes('scale factor')) return '2';
+  if (question && question.includes('area')) return '25';
+  if (question && question.includes('perimeter')) return '20';
+  return '42'; // Default answer
 }
-
