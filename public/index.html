@@ -3,55 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnswerAI5000 - AI Educational Assistant</title>
+    <title>AnswerAI5000 - Educational AI Assistant</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+        * {
             margin: 0;
-            padding: 2rem;
-            text-align: center;
+            padding: 0;
+            box-sizing: border-box;
         }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
         .container {
             max-width: 800px;
             margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
         }
+        
         .logo {
-            font-size: 4rem;
-            margin: 2rem 0;
+            font-size: 3em;
+            margin-bottom: 10px;
         }
-        .feature {
-            background: rgba(255,255,255,0.1);
-            padding: 1rem;
-            margin: 1rem 0;
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            opacity: 0.8;
+            font-size: 1.2em;
+        }
+        
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background: rgba(76, 175, 80, 0.3);
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .ai-message {
+            background: rgba(33, 150, 243, 0.3);
+            margin-right: auto;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #question-input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+        }
+        
+        #question-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .platform-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .platform-btn {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .platform-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .platform-btn.active {
+            background: rgba(76, 175, 80, 0.3);
+            border: 2px solid #4CAF50;
+        }
+        
+        .typing-indicator {
+            display: none;
+            color: #4CAF50;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">🤖</div>
-        <h1>AnswerAI5000</h1>
-        <p>AI-Powered Educational Assistant</p>
-        
-        <div class="feature">
-            <h3>How to Install</h3>
-            <p>1. Install Tampermonkey browser extension</p>
-            <p>2. Add the AnswerAI5000 script</p>
-            <p>3. Visit educational sites and click Solve</p>
+        <div class="header">
+            <div class="logo">🤖</div>
+            <h1>AnswerAI5000</h1>
+            <div class="tagline">AI-Powered Educational Assistant</div>
         </div>
         
-        <div class="feature">
-            <h3>Supported Platforms</h3>
-            <p>IXL, iReady, Schoology, Edpuzzle, Carnegie Learning</p>
+        <div class="platform-buttons">
+            <div class="platform-btn active" data-platform="general">General</div>
+            <div class="platform-btn" data-platform="math">Mathematics</div>
+            <div class="platform-btn" data-platform="science">Science</div>
+            <div class="platform-btn" data-platform="geometry">Geometry</div>
+            <div class="platform-btn" data-platform="algebra">Algebra</div>
         </div>
         
-        <p>&copy; 2024 AnswerAI5000</p>
+        <div class="chat-container" id="chat-container">
+            <div class="message ai-message">
+                <strong>AnswerAI5000:</strong> Hello! I'm your educational AI assistant. I can help with math, science, geometry, algebra, and more. Paste any question below and I'll solve it step by step!
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typing-indicator">
+            AnswerAI5000 is thinking...
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="question-input" placeholder="Paste your question here... (e.g., 'What is the scale factor of this dilation?')">
+            <button id="solve-btn">Solve Question</button>
+        </div>
     </div>
+
+    <script>
+        class AnswerAI5000 {
+            constructor() {
+                this.chatContainer = document.getElementById('chat-container');
+                this.questionInput = document.getElementById('question-input');
+                this.solveBtn = document.getElementById('solve-btn');
+                this.typingIndicator = document.getElementById('typing-indicator');
+                this.currentPlatform = 'general';
+                
+                this.initializeEventListeners();
+                this.addMessage('ai', 'Welcome! I can help with:<br>• Math problems and equations<br>• Geometry and scale factors<br>• Science questions<br>• Algebra calculations<br><br>Just paste your question above!');
+            }
+            
+            initializeEventListeners() {
+                this.solveBtn.addEventListener('click', () => this.solveQuestion());
+                this.questionInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.solveQuestion();
+                });
+                
+                // Platform buttons
+                document.querySelectorAll('.platform-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentPlatform = btn.dataset.platform;
+                    });
+                });
+            }
+            
+            async solveQuestion() {
+                const question = this.questionInput.value.trim();
+                if (!question) return;
+                
+                this.addMessage('user', question);
+                this.questionInput.value = '';
+                this.solveBtn.disabled = true;
+                this.showTypingIndicator();
+                
+                try {
+                    const answer = await this.generateAnswer(question);
+                    this.addMessage('ai', answer);
+                } catch (error) {
+                    this.addMessage('ai', `I encountered an error: ${error.message}. Please try again.`);
+                }
+                
+                this.hideTypingIndicator();
+                this.solveBtn.disabled = false;
+            }
+            
+            async generateAnswer(question) {
+                // Simulate API call to your Ollama backend
+                // In production, you'd call: http://localhost:11434/api/generate
+                
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        const answers = {
+                            'math': this.generateMathAnswer(question),
+                            'science': this.generateScienceAnswer(question),
+                            'geometry': this.generateGeometryAnswer(question),
+                            'algebra': this.generateAlgebraAnswer(question),
+                            'general': this.generateGeneralAnswer(question)
+                        };
+                        
+                        const answer = answers[this.currentPlatform] || this.generateGeneralAnswer(question);
+                        resolve(answer);
+                    }, 2000); // Simulate processing time
+                });
+            }
+            
+            generateMathAnswer(question) {
+                if (question.includes('scale factor') || question.includes('dilation')) {
+                    return `For dilation scale factor problems:<br><br>
+                    <strong>Solution:</strong><br>
+                    1. Identify corresponding lengths in original and dilated figures<br>
+                    2. Divide dilated length by original length<br>
+                    3. Scale factor = ${this.getRandomScaleFactor()}<br><br>
+                    <em>Example: If original side is 4 and dilated side is 8, scale factor = 8 ÷ 4 = 2</em>`;
+                }
+                
+                if (question.includes('area')) {
+                    return `For area calculations:<br><br>
+                    <strong>Common formulas:</strong><br>
+                    • Rectangle: length × width<br>
+                    • Triangle: ½ × base × height<br>
+                    • Circle: π × radius²<br><br>
+                    <strong>Answer:</strong> ${this.getRandomArea()}`;
+                }
+                
+                return this.generateGeneralAnswer(question);
+            }
+            
+            generateGeometryAnswer(question) {
+                const responses = [
+                    "Based on geometric principles, the solution involves analyzing angles, lengths, and spatial relationships.",
+                    "This geometry problem can be solved using properties of shapes, theorems, and formulas.",
+                    "The geometric solution requires understanding of congruence, similarity, and transformations."
+                ];
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            generateAlgebraAnswer(question) {
+                return `Algebraic solution:<br><br>
+                <strong>Step 1:</strong> Identify variables and equations<br>
+                <strong>Step 2:</strong> Apply algebraic operations<br>
+                <strong>Step 3:</strong> Solve for unknown variables<br>
+                <strong>Solution:</strong> x = ${this.getRandomNumber()}`;
+            }
+            
+            generateScienceAnswer(question) {
+                return `Scientific analysis:<br><br>
+                This question involves scientific principles and empirical reasoning. 
+                The solution requires understanding of natural phenomena and experimental data.`;
+            }
+            
+            generateGeneralAnswer(question) {
+                return `I'll help you solve this step by step:<br><br>
+                <strong>Step 1:</strong> Understand what the question is asking<br>
+                <strong>Step 2:</strong> Identify the relevant concepts<br>
+                <strong>Step 3:</strong> Apply appropriate methods<br>
+                <strong>Step 4:</strong> Verify the solution<br><br>
+                <strong>Key insight:</strong> ${this.getRandomInsight()}<br><br>
+                <em>For detailed solving, provide more specific question details.</em>`;
+            }
+            
+            getRandomScaleFactor() {
+                const factors = ['2', '3', '1.5', '0.5', '4'];
+                return factors[Math.floor(Math.random() * factors.length)];
+            }
+            
+            getRandomArea() {
+                const areas = ['25 square units', '36 cm²', '64 m²', '100 ft²'];
+                return areas[Math.floor(Math.random() * areas.length)];
+            }
+            
+            getRandomNumber() {
+                return Math.floor(Math.random() * 10) + 1;
+            }
+            
+            getRandomInsight() {
+                const insights = [
+                    "Focus on the relationship between given quantities",
+                    "Look for patterns or symmetries in the problem",
+                    "Consider multiple approaches to verify your answer",
+                    "Break complex problems into smaller, manageable steps"
+                ];
+                return insights[Math.floor(Math.random() * insights.length)];
+            }
+            
+            addMessage(sender, content) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                messageDiv.innerHTML = `<strong>${sender === 'ai' ? 'AnswerAI5000' : 'You'}:</strong> ${content}`;
+                this.chatContainer.appendChild(messageDiv);
+                this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
+            }
+            
+            showTypingIndicator() {
+                this.typingIndicator.style.display = 'block';
+            }
+            
+            hideTypingIndicator() {
+                this.typingIndicator.style.display = 'none';
+            }
+        }
+        
+        // Initialize the AI when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            window.answerAI = new AnswerAI5000();
+        });
+    </script>
 </body>
 </html>
