@@ -1,0 +1,17 @@
+async function getAIResponse(question) {
+try {
+const response = await fetch('http://localhost:11434/api/generate', {
+method: 'POST',
+headers: {'Content-Type': 'application/json'},
+body: JSON.stringify({
+model: 'deepseek-v3.1:671b-cloud',
+prompt: question,
+stream: false
+})
+});
+const data = await response.json();
+return data.response;
+} catch (error) {
+return "I can't connect to AI right now. Please make sure Ollama is running.";
+}
+}
